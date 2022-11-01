@@ -4,7 +4,7 @@ CFLAGS = -Wall
 
 all: Igor
 
-Igor: main.o connexion.o
+Igor: main.o connexion.o irc.o pretty_print.o
 	${CC} -o $@ $^ ${LDFLAGS}
 
 %.o: %.c

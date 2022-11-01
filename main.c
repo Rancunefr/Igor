@@ -6,10 +6,9 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-#define FAIL    -1
-
 #include "config.h"
 #include "connexion.h"
+#include "pretty_print.h"
 
 int main(int count, char *strings[])
 {
@@ -17,44 +16,45 @@ int main(int count, char *strings[])
     char read_buf[1024];
     char write_buf[1024] = { 0 };
     int bytes;
-    SSL_library_init();
 
+	ssl_init() ;
     server = connexion_open(SERVER, PORT);
+	connexion_show_cert(server) ;
 
 	sprintf(write_buf, "CAP REQ :twitch.tv/commands\n");
-	printf(">>> %s", write_buf);
+	print_out(write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
 	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	read_buf[bytes] = 0;
-	printf("<<< %s", read_buf);
+	print_in(read_buf);
 
 	sprintf(write_buf, "PASS %s\n", ID_TOKEN);
-	printf(">>> %s", write_buf);
+	print_out(write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
 	sprintf(write_buf, "NICK %s\n", NICKNAME);
-	printf(">>> %s", write_buf);
+	print_out(write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
 	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	read_buf[bytes] = 0;
-	printf("<<< %s", read_buf);
+	print_in(read_buf);
 
 	sprintf(write_buf, "JOIN %s\n", CHANNEL);
-	printf(">>> %s", write_buf);
+	print_out(write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
 	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	read_buf[bytes] = 0;
-	printf("<<< %s", read_buf);
+	print_in(read_buf);
 
 	sprintf(write_buf, "PRIVMSG  %s :Hello, I'm the bot !\n",
 		CHANNEL);
-	printf(">>> %s", write_buf);
+	print_out(write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
 
 	while (1) {
 	    bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	    if (bytes != 0) {
 		read_buf[bytes] = 0;
-		printf("<<< %s", read_buf);
+		print_in(read_buf);
 	    }
 	}
 

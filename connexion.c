@@ -1,4 +1,3 @@
-#include "connexion.h"
 
 #include <sys/socket.h>
 #include <openssl/err.h>
@@ -7,7 +6,14 @@
 #include <strings.h>
 #include <unistd.h>
 
-void ShowCerts(SSL* ssl) ;  
+#include "connexion.h"
+#include "pretty_print.h"
+
+void ssl_init() {
+    SSL_library_init();
+    OpenSSL_add_all_algorithms();  
+    SSL_load_error_strings();   
+}
 
 connexion_t*connexion_open(const char *hostname, int port)
 {
@@ -39,8 +45,6 @@ connexion_t*connexion_open(const char *hostname, int port)
     }
 		
     const SSL_METHOD *method;
-    OpenSSL_add_all_algorithms();  
-    SSL_load_error_strings();   
 		
     method = TLS_client_method();  
     connexion->ssl_context = SSL_CTX_new(method);   
@@ -58,25 +62,27 @@ connexion_t*connexion_open(const char *hostname, int port)
 		ERR_print_errors_fp(stderr)	;
 		free(connexion) ;
 		return NULL ;
-	} else {
-		ShowCerts(connexion->ssl);						
 	}
+
     return connexion ;
 }
 
-void ShowCerts(SSL* ssl)
+void connexion_show_cert(connexion_t* server)
 {
+	char buffer[1024] ;
     X509 *cert;
     char *line;
-    cert = SSL_get_peer_certificate(ssl); 
+    cert = SSL_get_peer_certificate(server->ssl); 
     if ( cert != NULL )
     {
-        printf("Server certificates:\n");
+        print_notice("Server certificates:\n");
         line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
-        printf("Subject: %s\n", line);
+        sprintf(buffer,"Subject: %s\n", line);
+		print_notice(buffer) ;
         free(line);       
         line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
-        printf("Issuer: %s\n", line);
+        sprintf(buffer, "Issuer: %s\n", line);
+		print_notice(buffer) ;
         free(line);       
         X509_free(cert);     
     }
