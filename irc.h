@@ -3,8 +3,8 @@
 
 #include "connexion.h"
 
-int irc_send_buffer( connexion_t* server, const char* buffer, size_t buffer_len ) ;
-int irc_recv_buffer( connexion_t* server, const char* buffer, size_t buffer_len ) ;
+int irc_send_buffer( connexion_t* server, const char* buffer ) ;
+int irc_recv_buffer( connexion_t* server, char* buffer, size_t buffer_len ) ;
 
 int irc_auth( connexion_t* server, const char* login, const char* password ) ;
 int irc_disconnect( connexion_t* server ) ;
