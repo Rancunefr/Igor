@@ -24,7 +24,7 @@ int main(int count, char *strings[])
 	sprintf(write_buf, "CAP REQ :twitch.tv/commands\n");
 	printf(">>> %s", write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
-	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	/* get reply & decrypt */
+	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	read_buf[bytes] = 0;
 	printf("<<< %s", read_buf);
 
@@ -34,14 +34,14 @@ int main(int count, char *strings[])
 	sprintf(write_buf, "NICK %s\n", NICKNAME);
 	printf(">>> %s", write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
-	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	/* get reply & decrypt */
+	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	read_buf[bytes] = 0;
 	printf("<<< %s", read_buf);
 
 	sprintf(write_buf, "JOIN %s\n", CHANNEL);
 	printf(">>> %s", write_buf);
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
-	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	/* get reply & decrypt */
+	bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	read_buf[bytes] = 0;
 	printf("<<< %s", read_buf);
 
@@ -51,7 +51,7 @@ int main(int count, char *strings[])
 	SSL_write(server->ssl, write_buf, strlen(write_buf));
 
 	while (1) {
-	    bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	/* get reply & decrypt */
+	    bytes = SSL_read(server->ssl, read_buf, sizeof(read_buf));	
 	    if (bytes != 0) {
 		read_buf[bytes] = 0;
 		printf("<<< %s", read_buf);
