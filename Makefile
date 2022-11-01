@@ -1,10 +1,10 @@
 CC = gcc
-LDFLAGS = -L/usr/lib -lssl -lcrypto
+LDFLAGS = -lssl -lcrypto
 CFLAGS = -Wall
 
 all: Igor
 
-Igor: main.o
+Igor: main.o connexion.o
 	${CC} -o $@ $^ ${LDFLAGS}
 
 %.o: %.c

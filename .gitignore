@@ -1,0 +1,13 @@
+*.d
+*.o
+*.P
+*.map
+*.axf
+*.bin
+*.jlink
+*.emSession
+*.elf
+*.ind
+build/
+*~
+
