@@ -3,8 +3,13 @@
 
 #include <openssl/ssl.h>
 
-int OpenConnection(const char *hostname, int port) ;
-SSL_CTX* InitCTX(void) ;
-void ShowCerts(SSL* ssl) ;  
+typedef struct {
+	int			sd ;
+	SSL_CTX*	ssl_context ;
+	SSL*		ssl ;
+} connexion_t ;
+
+connexion_t* connexion_open(const char *hostname, int port) ;
+void connexion_close( connexion_t * ) ;
 
 #endif

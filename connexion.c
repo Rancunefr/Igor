@@ -7,63 +7,85 @@
 #include <strings.h>
 #include <unistd.h>
 
-int OpenConnection(const char *hostname, int port)
+void ShowCerts(SSL* ssl) ;  
+
+connexion_t*connexion_open(const char *hostname, int port)
 {
-    int sd;
+	connexion_t* connexion ;
     struct hostent *host;
     struct sockaddr_in addr;
+	connexion = malloc(sizeof(connexion_t));
+	if (connexion==NULL) {
+		fprintf(stderr,"Malloc error\n");
+		return NULL ;
+	}
     if ( (host = gethostbyname(hostname)) == NULL )
     {
         perror(hostname);
-        abort();
+     	free(connexion);
+		return NULL ;
     }
-    sd = socket(PF_INET, SOCK_STREAM, 0);
+    connexion->sd = socket(PF_INET, SOCK_STREAM, 0);
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = *(long*)(host->h_addr);
-    if ( connect(sd, (struct sockaddr*)&addr, sizeof(addr)) != 0 )
+    if ( connect(connexion->sd, (struct sockaddr*)&addr, sizeof(addr)) != 0 )
     {
-        close(sd);
+        close(connexion->sd);
         perror(hostname);
-        abort();
+		free(connexion);
+		return NULL ;
     }
-    return sd;
-}
-SSL_CTX* InitCTX(void)
-{
+		
     const SSL_METHOD *method;
-    SSL_CTX *ctx;
-    OpenSSL_add_all_algorithms();  /* Load cryptos, et.al. */
-    SSL_load_error_strings();   /* Bring in and register error messages */
-    method = TLS_client_method();  /* Create new client-method instance */
-    ctx = SSL_CTX_new(method);   /* Create new context */
-    if ( ctx == NULL )
+    OpenSSL_add_all_algorithms();  
+    SSL_load_error_strings();   
+		
+    method = TLS_client_method();  
+    connexion->ssl_context = SSL_CTX_new(method);   
+    if ( connexion->ssl_context == NULL )
     {
         ERR_print_errors_fp(stderr);
+		free(connexion) ;
+		return NULL ;
         abort();
     }
-    return ctx;
+    
+	connexion->ssl = SSL_new(connexion->ssl_context);		
+    SSL_set_fd(connexion->ssl, connexion->sd);			
+    if (SSL_connect(connexion->ssl) == -1) {			
+		ERR_print_errors_fp(stderr)	;
+		free(connexion) ;
+		return NULL ;
+	} else {
+		ShowCerts(connexion->ssl);						
+	}
+    return connexion ;
 }
-
 
 void ShowCerts(SSL* ssl)
 {
     X509 *cert;
     char *line;
-    cert = SSL_get_peer_certificate(ssl); /* get the server's certificate */
+    cert = SSL_get_peer_certificate(ssl); 
     if ( cert != NULL )
     {
         printf("Server certificates:\n");
         line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
         printf("Subject: %s\n", line);
-        free(line);       /* free the malloc'ed string */
+        free(line);       
         line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
         printf("Issuer: %s\n", line);
-        free(line);       /* free the malloc'ed string */
-        X509_free(cert);     /* free the malloc'ed certificate copy */
+        free(line);       
+        X509_free(cert);     
     }
     else
         printf("Info: No client certificates configured.\n");
 }
 
+void connexion_close( connexion_t* server ) {
+	SSL_free( server->ssl ) ;
+	close ( server->sd ) ;
+	SSL_CTX_free( server->ssl_context) ;
+}
