@@ -48,3 +48,11 @@ int irc_say( connexion_t* server, const char* channel, const char* msg) {
 	irc_send_buffer(1, server, write_buf );
 	return 0 ;
 }
+
+
+int irc_pong( connexion_t* server, char* msg ) {
+    char write_buf[1024] = { 0 };
+	sprintf(write_buf, "PONG %s", msg);
+	irc_send_buffer(1, server, write_buf);
+	return 0 ;
+}
