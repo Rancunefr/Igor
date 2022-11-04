@@ -8,6 +8,7 @@
 
 #include "connexion.h"
 #include "pretty_print.h"
+#include "utils.h"
 
 void ssl_init() {
     SSL_library_init();
@@ -20,18 +21,20 @@ connexion_t*connexion_open(const char *hostname, int port)
 	connexion_t* connexion ;
     struct hostent *host;
     struct sockaddr_in addr;
+    const SSL_METHOD *method;
+
 	connexion = malloc(sizeof(connexion_t));
-	if (connexion==NULL) {
-		fprintf(stderr,"Malloc error\n");
-		return NULL ;
-	}
-    if ( (host = gethostbyname(hostname)) == NULL )
-    {
-        perror(hostname);
-     	free(connexion);
-		return NULL ;
-    }
+	if (connexion==NULL) 
+		error( "malloc()" ); 
+
+	host = gethostbyname(hostname) ;
+    if ( host == NULL )
+		error( "gethostbyname()");
+
     connexion->sd = socket(PF_INET, SOCK_STREAM, 0);
+	if ( connexion->sd == -1 )
+		error( "socket()") ;
+
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -39,31 +42,23 @@ connexion_t*connexion_open(const char *hostname, int port)
     if ( connect(connexion->sd, (struct sockaddr*)&addr, sizeof(addr)) != 0 )
     {
         close(connexion->sd);
-        perror(hostname);
-		free(connexion);
-		return NULL ;
+		error( "connect()" );
     }
-		
-    const SSL_METHOD *method;
 		
     method = TLS_client_method();  
     connexion->ssl_context = SSL_CTX_new(method);   
     if ( connexion->ssl_context == NULL )
     {
         ERR_print_errors_fp(stderr);
-		free(connexion) ;
-		return NULL ;
-        abort();
-    }
+		error( "SSL_CTX_new()" );
+    }	
     
 	connexion->ssl = SSL_new(connexion->ssl_context);		
     SSL_set_fd(connexion->ssl, connexion->sd);			
     if (SSL_connect(connexion->ssl) == -1) {			
 		ERR_print_errors_fp(stderr)	;
-		free(connexion) ;
-		return NULL ;
+		error( "SSL_connect()" );
 	}
-
     return connexion ;
 }
 
@@ -87,7 +82,7 @@ void connexion_show_cert(connexion_t* server)
         X509_free(cert);     
     }
     else
-        printf("Info: No client certificates configured.\n");
+        print_notice("No client certificates configured.\n");
 }
 
 void connexion_close( connexion_t* server ) {
