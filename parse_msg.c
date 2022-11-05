@@ -2,12 +2,10 @@
 #include "config.h"
 #include "irc.h"
 #include "parse_msg.h"
+#include "bot.h"
 
 void parse_msg( connexion_t* server, 
 		char* prefix, char* channel, char* params ) {
-
-
-printf("DEBUG: <%s> \n", params ) ;
 
 	if ( strlen(params) == 0 )
 		return ;
@@ -23,21 +21,19 @@ printf("DEBUG: <%s> \n", params ) ;
 			p++ ;
 		*p ='\0' ;
 		
-		if (strcmp(keyword, "help")==0) {
-			irc_say( server, channel, "Bonjour !" ) ;
-		}	
-	
-		// TODO Parsing de fichier ini avec les commandes et leur mot clé
+		bot_command( server, prefix, channel, keyword, params ) ;
 
 		return ;
 	}
-
+	
 	// La chaine transmise contient le nom du bot
 	
 	if ( strstr( params, NICKNAME ) != 0 ) {
-			irc_say( server, channel, "Oui maître, bien maître ..." ) ;
-			return ;
+		if ( strstr( params, "ACTION" ) == 0 )
+			bot_action( server, prefix, channel, params ) ;
+		else
+			bot_reply( server, prefix, channel, params ) ;
 	}
-	
 
+	
 }

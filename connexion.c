@@ -27,6 +27,11 @@ connexion_t*connexion_open(const char *hostname, int port)
 	if (connexion==NULL) 
 		error( "malloc()" ); 
 
+	connexion->nb_actions = 0 ;
+	connexion->nb_replies = 0 ;
+	connexion->nb_commands = 0 ;
+	connexion->nb_people = 0 ;
+
 	host = gethostbyname(hostname) ;
     if ( host == NULL )
 		error( "gethostbyname()");

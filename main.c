@@ -7,6 +7,7 @@
 
 #include "config.h"
 #include "connexion.h"
+#include "utils.h"
 #include "irc.h"
 #include "pretty_print.h"
 #include "parse_msg.h"
@@ -47,28 +48,25 @@ int main(int count, char *strings[])
 
 			if (strcmp(command, "PING") == 0) {
 				params = strtok(NULL, " ");
-				if ( params == NULL ) {
-					// TODO Gestion erreur
-				}
+				if ( params == NULL ) 
+					error( "Error while parsing PING : no string found" ) ;
 				irc_pong( server, params ) ;
-			}
+			} 
 
 			if (strcmp(command, "PRIVMSG") == 0) {
 				channel = strtok(NULL, " ");
 				if ( channel == NULL ) {
-					// TODO Gestion Erreur
+					error( "Error while parsing PRIVMSG : no channel found" );
 				}
 				params = channel + strlen(channel) + 2;
 				if ( params == NULL ) {
-					// TODO Gestion Erreur
+					error( "Error while parsing PRIVMSG : no string found" );
 				}
 				parse_msg( server, prefix, channel, params ) ;
-			}
-
+			}	
 		}
     }  
 
     connexion_close(server);
-
     return 0;
 }
