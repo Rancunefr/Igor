@@ -27,10 +27,18 @@ connexion_t*connexion_open(const char *hostname, int port)
 	if (connexion==NULL) 
 		error( "malloc()" ); 
 
+	connexion->actions = NULL ;
 	connexion->nb_actions = 0 ;
+	
+	connexion->replies = NULL ;
 	connexion->nb_replies = 0 ;
-	connexion->nb_commands = 0 ;
+
+	connexion->people = NULL ;
 	connexion->nb_people = 0 ;
+
+	connexion->commands = NULL ;
+	connexion->nb_commands = 0 ;
+
 	connexion->done = 0 ;
 
 	host = gethostbyname(hostname) ;
@@ -95,4 +103,10 @@ void connexion_close( connexion_t* server ) {
 	SSL_free( server->ssl ) ;
 	close ( server->sd ) ;
 	SSL_CTX_free( server->ssl_context) ;
+
+	if ( server->commands != NULL )
+		free( server->commands ) ;
+
+	server->nb_commands = 0 ;
 }
+

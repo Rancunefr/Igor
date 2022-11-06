@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <openssl/err.h>
 
+#include "bot.h"
 #include "config.h"
 #include "connexion.h"
 #include "utils.h"
@@ -23,10 +24,11 @@ int main(int count, char *strings[])
     server = connexion_open(SERVER, PORT);
     connexion_show_cert(server);
 
+	bot_load_commands( server, "./commands.ini" ) ;
+	bot_load_people( server, "./people.ini" ) ;
+
     irc_auth(server, NICKNAME, ID_TOKEN);
-
     irc_join(server, CHANNEL);
-
     irc_say(server, CHANNEL, "Hello !");
 
     while (!server->done) {

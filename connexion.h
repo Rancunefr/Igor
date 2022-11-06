@@ -27,16 +27,16 @@ typedef struct {
 
 	int done ;
 
-	char actions[100][STRING_SIZE] ;	
+	char** actions ;	
 	int nb_actions ;
 
-	char replies[100][STRING_SIZE] ;
+	char** replies ;
 	int nb_replies ;
 
-	shell_command_t commands[100] ;
+	shell_command_t* commands ;
 	int nb_commands ;
 
-	people_t people[100] ;
+	people_t* people ;
 	int nb_people ;
 
 } connexion_t ;

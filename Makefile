@@ -1,6 +1,6 @@
 CC = gcc
-LDFLAGS = -lssl -lcrypto
-CFLAGS = -Wall
+LDFLAGS = -lssl -lcrypto -liniparser4
+CFLAGS = -g -Wall -I/usr/include/iniparser4
 
 all: Igor
 
