@@ -11,7 +11,7 @@ Igor: main.o connexion.o irc.o pretty_print.o parse_msg.o bot.o
 	${CC} -c ${CFLAGS} $^
 
 clean:
-	rm *.o
-	rm Igor
+	rm -f *.o
+	rm -f Igor
 
 .PHONY: all clean
