@@ -17,7 +17,6 @@ int main(int count, char *strings[])
     connexion_t *server;
     char read_buf[1024];
     int bytes;
-    int done = 0;
 
     ssl_init();
 
@@ -30,7 +29,7 @@ int main(int count, char *strings[])
 
     irc_say(server, CHANNEL, "Hello !");
 
-    while (!done) {
+    while (!server->done) {
 		char *prefix = NULL;
 		char *command = NULL;
 		char *channel;

@@ -13,15 +13,19 @@ typedef struct {
 	int  required_level ;				// niveau de privilege nécessaire
 } shell_command_t ;
 
+
 typedef struct {
 	char nickname[STRING_SIZE] ;
 	int level ;
 } people_t ;
 
+
 typedef struct {
 	int			sd ;
 	SSL_CTX*	ssl_context ;
 	SSL*		ssl ;
+
+	int done ;
 
 	char actions[100][STRING_SIZE] ;	
 	int nb_actions ;

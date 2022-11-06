@@ -31,6 +31,7 @@ connexion_t*connexion_open(const char *hostname, int port)
 	connexion->nb_replies = 0 ;
 	connexion->nb_commands = 0 ;
 	connexion->nb_people = 0 ;
+	connexion->done = 0 ;
 
 	host = gethostbyname(hostname) ;
     if ( host == NULL )
