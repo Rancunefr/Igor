@@ -150,12 +150,13 @@ void bot_command( connexion_t* server,
 					char* arg[255] ;
 					char* chemin ;
 					chemin = strtok( server->commands[i].command, " ") ;
-					int c = 0 ;
+					arg[0] = chemin ;
+					int c = 1 ;
 					do {
 						arg[c] =strtok( NULL, " " ) ;
 						c++ ;
 					} while  ( arg[c-1] != NULL ) ;
-					execve( chemin, arg, NULL );
+					execvp( chemin, arg );
 				} else {
 					int stat_loc ;
 					wait( &stat_loc) ;
