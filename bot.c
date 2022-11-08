@@ -9,8 +9,6 @@
 #include "pretty_print.h"
 #include "utils.h"
 
-#define DEBUG
-
 void bot_load_commands( connexion_t* server, char* filename ) {
 	int i ;	
 	dictionary* dico ;
@@ -134,6 +132,7 @@ void bot_command( connexion_t* server,
 		if ( strcmp( keyword, "die" ) == 0 )  {
 			server->done = 1 ;
 			irc_say( server, channel, "AAAAAaaaaaarg" ) ;
+			irc_action( server, channel, "agonise" ) ;
 			return ;
 		}
 	}

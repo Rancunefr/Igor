@@ -65,7 +65,7 @@ void irc_say( connexion_t* server, const char* channel, const char* msg) {
 
 void irc_action( connexion_t* server, const char* channel, const char* msg) {
     char write_buf[1024] = { 0 };
-	sprintf(write_buf, "ACTION  %s :%s\n", channel, msg);
+	sprintf(write_buf, "PRIVMSG %s :/me %s\n", channel, msg);
 	irc_send_buffer(1, server, write_buf );
 }
 

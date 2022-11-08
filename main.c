@@ -30,6 +30,7 @@ int main(int count, char *strings[])
     irc_auth(server, NICKNAME, ID_TOKEN);
     irc_join(server, CHANNEL);
     irc_say(server, CHANNEL, "Hello !");
+    irc_action(server, CHANNEL, "salue la noble assemblée");
 
     while (!server->done) {
 		char *prefix = NULL;
