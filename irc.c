@@ -58,9 +58,11 @@ int irc_join( connexion_t* server, const char* channel ) {
 }
 
 void irc_say( connexion_t* server, const char* channel, const char* msg) {
+    char read_buf[1024];
     char write_buf[1024] = { 0 };
 	sprintf(write_buf, "PRIVMSG  %s :%s\n", channel, msg);
 	irc_send_buffer(1, server, write_buf );
+	irc_recv_buffer(1, server, read_buf, sizeof(read_buf) ) ;
 }
 
 void irc_action( connexion_t* server, const char* channel, const char* msg) {

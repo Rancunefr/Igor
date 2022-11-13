@@ -89,18 +89,24 @@ void bot_load_replies( connexion_t* server, char* filename ) {
 
 
 void bot_load_actions( connexion_t* server, char* filename ) {
-
 }
 
 
 void bot_action( connexion_t* server, 
         char* prefix, char* channel, char* params ){
+	char* nickname ;
+	nickname = strtok(prefix, "!");
+	if (nickname == NULL ) {
+		return ;
+	}
 
+	irc_action( server, channel, "coucou !" ) ;
 }
 
 void bot_reply( connexion_t* server, 
         char* prefix, char* channel, char* params ){
 
+	irc_say( server, channel, "coucou !" ) ;
 }
 
 
@@ -121,14 +127,16 @@ void bot_command( connexion_t* server,
 		if ( strcmp( nickname, server->people[i].nickname ) == 0 )
 			level = server->people[i].level ;
 
-
 #ifdef DEBUG
 	printf("nickname : <%s> \n", nickname ) ;
-	printf("channel: <%s> \n", channel ) ;
 	printf("keyword: <%s> \n", keyword ) ;
+	printf("channel: <%s> \n", channel ) ;
+	printf("user level: <%d> \n", level ) ;
 #endif
+
+	// Commandes de niveau 5
 	
-	if ( strcmp( nickname, OWNER) == 0 ) { // Ici les commandes reservees au proprio du bot
+	if ( level >=5 ) { 
 		if ( strcmp( keyword, "die" ) == 0 )  {
 			server->done = 1 ;
 			irc_say( server, channel, "AAAAAaaaaaarg" ) ;
@@ -136,6 +144,31 @@ void bot_command( connexion_t* server,
 			return ;
 		}
 	}
+
+	// Commande de niveau 1
+	
+	if ( level >= 1 ) {
+		if ( strcmp( keyword, "help" ) == 0 ) {
+			char buffer[600] ;
+			for ( i=0; i<server->nb_commands; i++ ) {
+				sprintf( buffer, "[%s] %s \n", server->commands[i].keyword, server->commands[i].description ) ;
+				irc_say( server, channel, buffer ) ;    // FIXME
+			}
+		}
+
+		if ( strcmp( keyword, "friends" ) == 0 ) {
+			irc_say( server, channel, "Tix : https://www.twitch.tv/tixlegeek" ) ;
+			irc_say( server, channel, "Fixou : https://www.twitch.tv/fixoulab" ) ;
+			irc_say( server, channel, "Imil : https://www.twitch.tv/imilnb" ) ;
+			irc_say( server, channel, "Nils : https://www.twitch.tv/ahp_nils" ) ;
+		}
+
+		if ( strcmp( keyword, "tagada" ) == 0 ) {
+			irc_say( server, channel, "tsoin tsoin !" ) ;
+		}
+	}
+
+	// Commandes normales
 
 	for ( i=0; i< server->nb_commands; i++ ) {
 		if ( strcmp( keyword, server->commands[i].keyword ) == 0 ) {

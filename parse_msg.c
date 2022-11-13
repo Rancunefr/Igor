@@ -29,7 +29,7 @@ void parse_msg( connexion_t* server,
 	// La chaine transmise contient le nom du bot
 	
 	if ( strstr( params, NICKNAME ) != 0 ) {
-		if ( strstr( params, "ACTION" ) == 0 )
+		if ( strstr( params, "ACTION" ) != 0 )
 			bot_action( server, prefix, channel, params ) ;
 		else
 			bot_reply( server, prefix, channel, params ) ;
