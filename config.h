@@ -1,5 +1,5 @@
 #define NICKNAME	"Igor_le_servile"
-#define ID_TOKEN	"oauth:XXXXXXXXXXXXXXXXXX"
+#define ID_TOKEN	"oauth:o2elvsyma0y2r0qcqhkgzqzq5fifrg"
 #define SERVER		"irc.chat.twitch.tv"
 #define PORT		6697
 #define CHANNEL		"#rancune_"
