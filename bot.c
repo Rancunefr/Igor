@@ -145,9 +145,8 @@ void bot_command( connexion_t* server,
 		}
 	}
 
-	// Commande de niveau 1
+	// Commande de niveau 0
 	
-	if ( level >= 1 ) {
 		if ( strcmp( keyword, "help" ) == 0 ) {
 			char buffer[600] ;
 			for ( i=0; i<server->nb_commands; i++ ) {
@@ -166,7 +165,18 @@ void bot_command( connexion_t* server,
 		if ( strcmp( keyword, "tagada" ) == 0 ) {
 			irc_say( server, channel, "tsoin tsoin !" ) ;
 		}
-	}
+
+		if ( strcmp( keyword, "ciseau" ) == 0 ) {
+			irc_say( server, channel, "Pierre. Je gagne !" ) ;
+		}
+
+		if ( strcmp( keyword, "pierre" ) == 0 ) {
+			irc_say( server, channel, "Enchanté Pierre, moi c'est Igor." ) ;
+		}
+
+		if ( strcmp( keyword, "spock" ) == 0 ) {
+			irc_say( server, channel, "🖖" ) ;
+		}
 
 	// Commandes normales
 
