@@ -84,29 +84,124 @@ void bot_load_people( connexion_t* server, char* filename ) {
 }
 
 void bot_load_replies( connexion_t* server, char* filename ) {
+	FILE* handle;
+	char buffer[255] ;
+	char key[128];
+	int count ;
+	handle = fopen( filename, "r" ) ;
+	if ( handle == NULL ) {
+		print_error( "Could not load replies file\n" ) ;
+		return ;
+	}
+
+	count = 0 ;
+	int c ;
+	while( (c=fgetc(handle)) != EOF ) {
+		if ( c == '\n' )
+			count++;
+	}
+
+
+	server->replies = malloc( count*sizeof(char*) ) ;
+	server->nb_replies = count ;
+
+	fseek(handle, 0, SEEK_SET) ;
+
+	count = 0 ;
+	while ( fgets( buffer, 255, handle) != NULL ) {
+		size_t longueur = 0 ;
+		longueur = strlen( buffer ) ;
+		server->replies[count] = malloc( longueur+1 ) ;
+		snprintf( server->replies[count], longueur+1, "%s", buffer ) ;
+		count++ ;
+	}
+#ifdef DEBUG
+	int i ;
+	for (i=0; i<server->nb_replies; i++ )
+		printf("- %s\n", server->replies[i] ) ;
+#endif
+
+	sprintf(key, "%d replies loaded \n", server->nb_replies ) ;
+	print_notice( key ) ;
 
 }
 
 
 void bot_load_actions( connexion_t* server, char* filename ) {
-}
+	FILE* handle;
+	char buffer[255] ;
+	char key[128];
+	int count ;
+	handle = fopen( filename, "r" ) ;
+	if ( handle == NULL ) {
+		print_error( "Could not load actions file\n" ) ;
+		return ;
+	}
 
+	count = 0 ;
+	int c ;
+	while( (c=fgetc(handle)) != EOF ) {
+		if ( c == '\n' )
+			count++;
+	}
+
+
+	server->actions = malloc( count*sizeof(char*) ) ;
+	server->nb_actions = count ;
+
+	fseek(handle, 0, SEEK_SET) ;
+
+	count = 0 ;
+	while ( fgets( buffer, 255, handle) != NULL ) {
+		size_t longueur = 0 ;
+		longueur = strlen( buffer ) ;
+		server->actions[count] = malloc( longueur+1 ) ;
+		snprintf( server->actions[count], longueur+1, "%s", buffer ) ;
+		count++ ;
+	}
+#ifdef DEBUG
+	int i ;
+	for (i=0; i<server->nb_actions; i++ )
+		printf("- %s\n", server->actions[i] ) ;
+#endif
+
+	sprintf(key, "%d actions loaded \n", server->nb_actions ) ;
+	print_notice( key ) ;
+
+}
 
 void bot_action( connexion_t* server, 
         char* prefix, char* channel, char* params ){
+
+	char reponse[255] ;
+	int nb_reponse ;
 	char* nickname ;
 	nickname = strtok(prefix, "!");
 	if (nickname == NULL ) {
 		return ;
 	}
+	
+	nb_reponse = rand() % ( server->nb_actions ) ;
 
-	irc_action( server, channel, "coucou !" ) ;
+	snprintf( reponse,255, server->actions[nb_reponse], nickname ) ; 
+	irc_action( server, channel, reponse ) ;
 }
 
 void bot_reply( connexion_t* server, 
         char* prefix, char* channel, char* params ){
 
-	irc_say( server, channel, "coucou !" ) ;
+	char reponse[255] ;
+	char* nickname ;
+	int nb_reponse ;
+	nickname = strtok(prefix, "!");
+	if (nickname == NULL ) {
+		return ;
+	}
+
+	nb_reponse = rand() % ( server->nb_replies ) ;
+
+	snprintf( reponse,255, "%s: %s", nickname, server->replies[nb_reponse] ) ; 
+	irc_say( server, channel, reponse ) ;
 }
 
 

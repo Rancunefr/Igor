@@ -26,6 +26,8 @@ int main(int count, char *strings[])
 
 	bot_load_commands( server, "./commands.ini" ) ;
 	bot_load_people( server, "./people.ini" ) ;
+	bot_load_replies( server, "./replies.txt" ) ;
+	bot_load_actions( server, "./actions.txt" ) ;
 
     irc_auth(server, NICKNAME, ID_TOKEN);
     irc_join(server, CHANNEL);
