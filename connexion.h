@@ -2,6 +2,7 @@
 #define CONNEXION_H
 
 #include <openssl/ssl.h>
+#include "ollama.h"
 
 #define STRING_SIZE 500
 #define KEYWORD_SIZE 24
@@ -38,6 +39,8 @@ typedef struct {
 
 	people_t* people ;
 	int nb_people ;
+
+	ollama_cx_t* llama ;
 
 } connexion_t ;
 

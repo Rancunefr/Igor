@@ -29,6 +29,8 @@ int main(int count, char *strings[])
 	bot_load_replies( server, "./replies.txt" ) ;
 	bot_load_actions( server, "./actions.txt" ) ;
 
+	server->llama = ollama_new() ;
+
     irc_auth(server, NICKNAME, ID_TOKEN);
     irc_join(server, CHANNEL);
     irc_say(server, CHANNEL, "Hello !");
@@ -70,6 +72,8 @@ int main(int count, char *strings[])
 			}	
 		}
     }  
+
+	ollama_free( server->llama ) ;
 
     connexion_close(server);
     return 0;
