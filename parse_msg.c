@@ -25,7 +25,22 @@ void parse_msg( connexion_t* server,
 
 		return ;
 	}
-	
+
+	// La chaine commance par le nom du bot
+
+	if (params[0]=='@') {
+		char* str ;
+		str = strstr( params, NICKNAME ) ;
+
+		if ( str == params+1 ) {
+			char* p ;
+			p = str ;
+			while (*p && *p !=' '&& *p!='\n' && *p!= '\r' )
+				p++ ;
+			bot_reply( server, prefix, channel, p) ;
+			return ;
+		}
+	}
 	// La chaine transmise contient le nom du bot
 	
 	if ( strstr( params, NICKNAME ) != 0 ) {
