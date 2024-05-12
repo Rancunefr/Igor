@@ -50,5 +50,12 @@ void parse_msg( connexion_t* server,
 			bot_reply( server, prefix, channel, params ) ;
 	}
 
+	if ( strstr( params, "igor" ) != 0 ) {
+		if ( strstr( params, "ACTION" ) != 0 )
+			bot_action( server, prefix, channel, params ) ;
+		else
+			bot_reply( server, prefix, channel, params ) ;
+	}
+	
 	
 }
