@@ -8,4 +8,6 @@ struct ollama_cx_s* ollama_new() ;
 void ollama_free(struct ollama_cx_s* tmp) ;
 int ollama_send( struct ollama_cx_s *llama, char* str_prompt ) ;
 char* ollama_get_reply( struct ollama_cx_s* tmp ) ;
+void ollama_reset_context( struct ollama_cx_s* tmp ) ;
+int  ollama_get_context_size( struct ollama_cx_s* tmp ) ;
 #endif

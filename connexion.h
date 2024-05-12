@@ -31,9 +31,6 @@ typedef struct {
 	char** actions ;	
 	int nb_actions ;
 
-	char** replies ;
-	int nb_replies ;
-
 	shell_command_t* commands ;
 	int nb_commands ;
 

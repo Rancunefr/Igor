@@ -30,9 +30,6 @@ connexion_t*connexion_open(const char *hostname, int port)
 	connexion->actions = NULL ;
 	connexion->nb_actions = 0 ;
 	
-	connexion->replies = NULL ;
-	connexion->nb_replies = 0 ;
-
 	connexion->people = NULL ;
 	connexion->nb_people = 0 ;
 

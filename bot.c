@@ -83,50 +83,6 @@ void bot_load_people( connexion_t* server, char* filename ) {
 	iniparser_freedict( dico) ;
 }
 
-void bot_load_replies( connexion_t* server, char* filename ) {
-	FILE* handle;
-	char buffer[255] ;
-	char key[128];
-	int count ;
-	handle = fopen( filename, "r" ) ;
-	if ( handle == NULL ) {
-		print_error( "Could not load replies file\n" ) ;
-		return ;
-	}
-
-	count = 0 ;
-	int c ;
-	while( (c=fgetc(handle)) != EOF ) {
-		if ( c == '\n' )
-			count++;
-	}
-
-
-	server->replies = malloc( count*sizeof(char*) ) ;
-	server->nb_replies = count ;
-
-	fseek(handle, 0, SEEK_SET) ;
-
-	count = 0 ;
-	while ( fgets( buffer, 255, handle) != NULL ) {
-		size_t longueur = 0 ;
-		longueur = strlen( buffer ) ;
-		server->replies[count] = malloc( longueur+1 ) ;
-		snprintf( server->replies[count], longueur+1, "%s", buffer ) ;
-		count++ ;
-	}
-#ifdef DEBUG
-	int i ;
-	for (i=0; i<server->nb_replies; i++ )
-		printf("- %s\n", server->replies[i] ) ;
-#endif
-
-	sprintf(key, "%d replies loaded \n", server->nb_replies ) ;
-	print_notice( key ) ;
-
-}
-
-
 void bot_load_actions( connexion_t* server, char* filename ) {
 	FILE* handle;
 	char buffer[255] ;
@@ -250,8 +206,15 @@ void bot_reply( connexion_t* server,
 		irc_say( server, channel, "Mais enfin, faites des phrases plus courtes !") ;
 	} else {
 		requete = str_replace( params, "@igor_le_servile", "Igor" );
-		ollama_send( server->llama, requete ) ;
-		irc_say( server, channel, ollama_get_reply(server->llama) ) ;
+		printf("---\nRequete LLAMA3:\n%s\n---\n",requete) ;
+		if (ollama_send(server->llama,requete)==0) {
+			irc_say( server, channel, ollama_get_reply(server->llama) ) ;
+		printf("---\nReponse LLAMA3:\n%s\n---\n",ollama_get_reply(server->llama)) ;
+		printf("---\nTaille du contexte: %d\n---\n",ollama_get_context_size(server->llama)) ;
+
+		} else {
+			irc_action( server, channel, "boude. Il veut pas répondre." ) ;
+		}
 		free(requete) ;
 	}
 }
@@ -288,6 +251,11 @@ void bot_command( connexion_t* server,
 			server->done = 1 ;
 			irc_say( server, channel, "AAAAAaaaaaarg" ) ;
 			irc_action( server, channel, "agonise" ) ;
+			return ;
+		}
+		if ( strcmp( keyword, "reset" ) == 0 )  {
+			ollama_reset_context(server->llama) ;
+			irc_action( server, channel, "fait un AVC." ) ;
 			return ;
 		}
 	}

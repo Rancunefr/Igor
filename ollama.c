@@ -94,8 +94,11 @@ int ollama_send( ollama_cx_t *llama, char* str_prompt ) {
 
 	llama->buffer.position = 0 ;
 	res = curl_easy_perform(llama->curl);
-	if(res != CURLE_OK)
+	if(res != CURLE_OK) {
 		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+		return 1 ;
+	}
+
 	ollama_parse_msg(llama) ;
 
 	json_object_put(ollama_request) ;
@@ -135,3 +138,13 @@ char* ollama_get_reply( struct ollama_cx_s* tmp ) {
 	return tmp->reply.array ;
 }
 
+
+void ollama_reset_context( struct ollama_cx_s* tmp ) {
+	json_object_put( tmp->context ) ;
+	tmp->context = json_object_new_object() ;
+	json_object_object_add(tmp->context,"context", json_object_new_array()) ;
+}
+
+int ollama_get_context_size( struct ollama_cx_s* tmp ) {
+	return (int) json_object_array_length(json_object_object_get(tmp->context,"context")) ;
+}
